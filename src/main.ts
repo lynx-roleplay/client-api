@@ -1,26 +1,51 @@
-import jsonServer from 'json-server';
+import express from 'express';
+import ejwt from 'express-jwt';
+import jwt from 'jsonwebtoken';
+import { sha256 } from 'js-sha256';
 
-const server = jsonServer.create();
-const router = jsonServer.router('db.json');
-const middlewares = jsonServer.defaults();
+const app = express();
 
-server.use(middlewares);
+interface AnyObject {
+  [key: string]: any;
+}
 
-server.use(jsonServer.rewriter({
-  '/users/*': '/user?login=$1'
-}));
+/// FIXME: Put downloads.json in the following path.
+const downloads = require('../config/downloads.json');
 
-server.get('/user', (req: any, res: any) => {
-  res.jsonp(req.query);
-});
+let secret: string = sha256(Date.now().toString());
+app.use(ejwt({ secret: secret, algorithms: ['HS256'], credentialsRequired: false }).unless({ path: ['/auth'] }));
+app.use(express.json());
 
-server.use(jsonServer.bodyParser);
-server.use((req: any, _res: any, next: any) => {
+app.use((_err: any, req: any, _res: any, next: any) => {
   if (req.method === 'POST') req.body.createdAt = Date.now();
   next();
 });
 
-server.use(router);
-server.listen(80, () => {
+app.post('/auth', (req: any, res: any) => res.jsonp({ authentication_token: jwt.sign({
+  created: Date.now(),
+  secret: secret,
+  type: 'client',
+  id: req.body.id
+}, secret, { expiresIn: '24h' }) }));
+
+app.get('/client', (_req: any, res: any) => res.jsonp({
+  version: 1
+}));
+
+app.get('/game', (_req: any, res: any) => res.jsonp({
+  version: 1
+}));
+
+app.get('/download/:platform/:arch', (req: any, res: any) => {
+  const platform = `${req.params.platform}_${req.params.arch}`;
+
+  let result: AnyObject = {
+    jre: downloads.jre[platform]
+  };
+  if (req.user && req.user.secret === secret) result.modpack = downloads.modpack;
+  res.jsonp(result);
+});
+
+app.listen(80, () => {
   console.log('Lynx Client API  Copyright (c) 2021 Lynx Roleplay <lynxrp.team@gmail.com>');
 });

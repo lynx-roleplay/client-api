@@ -1,19 +1,19 @@
 {
-    "compileOnSave": false,
-    "compilerOptions": {
-        "target": "es2015",
-        "moduleResolution": "node",
-        "newLine": "LF",
-        "allowSyntheticDefaultImports": true,
-        "pretty": true,
-        "strict": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "sourceMap": true,
-        "skipLibCheck": true,
-        "allowJs": true
-    },
-    "include": [
-        "src/**/*"
-    ]
+  "compileOnSave": false,
+  "compilerOptions": {
+    "target": "es2015",
+    "moduleResolution": "node",
+    "newLine": "LF",
+    "allowSyntheticDefaultImports": true,
+    "pretty": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "allowJs": true
+  },
+  "include": [
+    "src/**/*"
+  ]
 }
