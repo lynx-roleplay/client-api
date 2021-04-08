@@ -15,7 +15,7 @@ dockerinstall:
 
 .PHONY: dockerstart
 dockerstart: dockerinstall
-	docker run lynx-roleplay/client-api -d
+	docker run -d lynx-roleplay/client-api
 
 .PHONY: dockerstop
 dockerstop:
